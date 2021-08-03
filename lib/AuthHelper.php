@@ -152,11 +152,12 @@ class AuthHelper
      * Get Access token for the API
      * Call this when being redirected from shopify page ( to the $redirectUrl) after authentication
      *
+     * @param string|null code Access Token
      * @throws SdkException if SharedSecret or ApiKey is missing in SDK configuration or request is not valid
      *
      * @return string
      */
-    public static function getAccessToken()
+    public static function getAccessToken($code = null)
     {
         $config = ShopifySDK::$config;
 
@@ -168,7 +169,7 @@ class AuthHelper
             $data = array(
                 'client_id' => $config['ApiKey'],
                 'client_secret' => $config['SharedSecret'],
-                'code' => $_GET['code'],
+                'code' => $code ?? $_GET['code'],
             );
 
             $response = HttpRequestJson::post($config['AdminUrl'] . 'oauth/access_token', $data);
