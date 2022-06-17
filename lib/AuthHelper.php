@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * @author Tareq Mahmood <tareqtms@yahoo.com>
- * Created at: 8/27/16 10:58 AM UTC+06:00
- */
 
 namespace PHPShopify;
-
 
 use PHPShopify\Exception\SdkException;
 
@@ -59,10 +53,8 @@ class AuthHelper
      *
      * @return bool
      */
-    public static function verifyShopifyRequest()
+    public static function verifyShopifyRequest(array $data)
     {
-        $data = $_GET;
-
         if(!isset(ShopifySDK::$config['SharedSecret'])) {
             throw new SdkException("Please provide SharedSecret while configuring the SDK client.");
         }
@@ -152,12 +144,14 @@ class AuthHelper
      * Get Access token for the API
      * Call this when being redirected from shopify page ( to the $redirectUrl) after authentication
      *
-     * @param string|null code Access Token
+     * @param string code Access Token
+     * @param array data Query parameters for HMAC check
+     * @param bool bypassSignatureCheck Bypassing HMAC check
      * @throws SdkException if SharedSecret or ApiKey is missing in SDK configuration or request is not valid
      *
      * @return string
      */
-    public static function getAccessToken($code = null)
+    public static function getAccessToken(string $code, array $data = null, bool $bypassSignatureCheck = false)
     {
         $config = ShopifySDK::$config;
 
@@ -165,11 +159,11 @@ class AuthHelper
             throw new SdkException("SharedSecret and ApiKey are required for getting access token. Please check SDK configuration!");
         }
 
-        if(self::verifyShopifyRequest()) {
+        if($bypassSignatureCheck || self::verifyShopifyRequest($data)) {
             $data = array(
                 'client_id' => $config['ApiKey'],
                 'client_secret' => $config['SharedSecret'],
-                'code' => $code ?? $_GET['code'],
+                'code' => $code,
             );
 
             $response = HttpRequestJson::post($config['AdminUrl'] . 'oauth/access_token', $data);
