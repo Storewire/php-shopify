@@ -14,12 +14,26 @@ composer require phpclassic/php-shopify
 PHPShopify uses curl extension for handling http calls. So you need to have the curl extension installed and enabled with PHP.
 >However if you prefer to use any other available package library for handling HTTP calls, you can easily do so by modifying 1 line in each of the `get()`, `post()`, `put()`, `delete()` methods in `PHPShopify\HttpRequestJson` class.
 
+You can pass additional curl configuration to `ShopifySDK`
+```php
+$config = array(
+    'ShopUrl' => 'yourshop.myshopify.com',
+    'ApiKey' => '***YOUR-PRIVATE-API-KEY***',
+    'Password' => '***YOUR-PRIVATE-API-PASSWORD***',   
+    'Curl' => array(
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_FOLLOWLOCATION => true
+    )
+);
+
+PHPShopify\ShopifySDK::config($config);
+```
 ## Usage
 
 You can use PHPShopify in a pretty simple object oriented way. 
 
 #### Configure ShopifySDK
-If you are using your own private API, provide the ApiKey and Password. 
+If you are using your own private API (except GraphQL), provide the ApiKey and Password. 
 
 ```php
 $config = array(
@@ -31,7 +45,8 @@ $config = array(
 PHPShopify\ShopifySDK::config($config);
 ```
 
-For Third party apps, use the permanent access token.
+For Third party apps, use the permanent access token. 
+> For GraphQL, AccessToken is required. If you are using private API for GraphQL, use your password as AccessToken here.
 
 ```php
 $config = array(

@@ -68,6 +68,7 @@ use PHPShopify\Exception\SdkException;
 
 /**
  * @property-read AbandonedCheckout $AbandonedCheckout
+ * @property-read AccessScope $AccessScope
  * @property-read ApplicationCharge $ApplicationCharge
  * @property-read Blog $Blog
  * @property-read CarrierService $CarrierService
@@ -113,6 +114,7 @@ use PHPShopify\Exception\SdkException;
  * @property-read GraphQL $GraphQL
  *
  * @method AbandonedCheckout AbandonedCheckout(integer $id = null)
+ * @method AccessScope AccessScope()
  * @method ApplicationCharge ApplicationCharge(integer $id = null)
  * @method Blog Blog(integer $id = null)
  * @method CarrierService CarrierService(integer $id = null)
@@ -130,6 +132,7 @@ use PHPShopify\Exception\SdkException;
  * @method DiscountCode DiscountCode(integer $id = null)
  * @method Event Event(integer $id = null)
  * @method FulfillmentService FulfillmentService(integer $id = null)
+ * @method FulfillmentOrder FulfillmentOrder(integer $id = null)
  * @method GiftCard GiftCard(integer $id = null)
  * @method InventoryItem InventoryItem(integer $id = null)
  * @method InventoryLevel InventoryLevel(integer $id = null)
@@ -166,6 +169,7 @@ class ShopifySDK
      */
     protected $resources = array(
         'AbandonedCheckout',
+        'AccessScope',
         'ApplicationCharge',
         'Blog',
         'CarrierService',
@@ -183,6 +187,7 @@ class ShopifySDK
         'DraftOrder',
         'Event',
         'FulfillmentService',
+        'FulfillmentOrder',
         'GiftCard',
         'InventoryItem',
         'InventoryLevel',
@@ -224,7 +229,7 @@ class ShopifySDK
     /**
      * @var string Default Shopify API version
      */
-    public static $defaultApiVersion = '2021-01';
+    public static $defaultApiVersion = '2022-01';
 
     /**
      * Shop / API configurations
@@ -349,6 +354,10 @@ class ShopifySDK
         //If want to keep more wait time than .5 seconds for each call
         if (isset($config['AllowedTimePerCall'])) {
             static::$timeAllowedForEachApiCall = $config['AllowedTimePerCall'];
+        }
+
+        if (isset($config['Curl']) && is_array($config['Curl'])) {
+            CurlRequest::config($config['Curl']);
         }
 
         return new ShopifySDK;
